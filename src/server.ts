@@ -107,7 +107,14 @@ export async function main() {
   console.error('AST Refactor MCP Server running on stdio (Prototype 1)');
 }
 
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const isDirectRun =
+  process.argv[1] &&
+  path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase();
+
+if (isDirectRun) {
   main().catch((err) => {
     console.error('Fatal error in MCP server:', err);
     process.exit(1);
