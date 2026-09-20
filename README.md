@@ -110,15 +110,6 @@ To use this server with an MCP client (such as Claude Desktop or Cursor), add th
 
 ---
 
-## Roadmap
-
-* [x] Prototype 1: Bare-bones project scaffolding and MCP server skeleton with stubbed tools
-* [ ] Prototype 2: Tree-sitter parser initialization and AST syntax error validator
-* [ ] Prototype 3: `get_file_outline` structural outline tool implementation
-* [ ] Prototype 4: `find_symbol_references` with lexical scope resolution
-* [ ] Prototype 5: `safe_rename_identifier` with reverse byte-offset replacement & error rollback
-* [ ] Multi-language support (Python and Go grammars)
-
 ---
 
 ## License
