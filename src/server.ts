@@ -1,6 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import { getFileOutline } from './tools/outline.js';
+import path from 'node:path';
 
 export function createAstRefactorServer(): McpServer {
   const server = new McpServer({
@@ -8,7 +10,7 @@ export function createAstRefactorServer(): McpServer {
     version: '0.1.0',
   });
 
-  // Tool 1: get_file_outline (Prototype 1: Bare-bones stub)
+  // Tool 1: get_file_outline
   server.tool(
     'get_file_outline',
     'Extracts function signatures, classes, interfaces, and boundary ranges from a source file.',
@@ -16,20 +18,32 @@ export function createAstRefactorServer(): McpServer {
       filePath: z.string().describe('The absolute or relative path to the source file to outline.'),
     },
     async ({ filePath }: { filePath: string }) => {
-      const result = {
-        filePath,
-        status: 'stub',
-        message: 'Prototype 1 stub: get_file_outline will be fully implemented in Prototype 3.',
-        outline: [],
-      };
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(result, null, 2),
-          },
-        ],
-      };
+      try {
+        const outline = await getFileOutline(path.resolve(filePath));
+        const result = {
+          filePath,
+          status: 'success',
+          outline,
+        };
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      } catch (err: any) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text',
+              text: `Error getting outline: ${err.message}`,
+            },
+          ],
+        };
+      }
     }
   );
 

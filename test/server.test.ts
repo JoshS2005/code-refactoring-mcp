@@ -32,12 +32,13 @@ describe('AST Refactor MCP Server - Prototype 1 Bare Bones', () => {
     expect(toolNames).toContain('safe_rename_identifier');
   });
 
-  it('invokes get_file_outline stub successfully', async () => {
+  it('invokes get_file_outline successfully', async () => {
     const result = await client.callTool({
       name: 'get_file_outline',
-      arguments: { filePath: 'src/index.ts' },
+      arguments: { filePath: 'src/server.ts' },
     });
 
+    expect(result.isError).toBeFalsy();
     expect(result.content).toBeDefined();
     expect(result.content.length).toBeGreaterThan(0);
 
@@ -45,9 +46,13 @@ describe('AST Refactor MCP Server - Prototype 1 Bare Bones', () => {
     expect(firstContent.type).toBe('text');
     if (firstContent.type === 'text') {
       const parsed = JSON.parse(firstContent.text);
-      expect(parsed.filePath).toBe('src/index.ts');
-      expect(parsed.status).toBe('stub');
-      expect(parsed.outline).toEqual([]);
+      expect(parsed.filePath).toBe('src/server.ts');
+      expect(parsed.status).toBe('success');
+      expect(parsed.outline.length).toBeGreaterThan(0);
+      
+      const functionNode = parsed.outline.find((o: any) => o.name === 'createAstRefactorServer');
+      expect(functionNode).toBeDefined();
+      expect(functionNode.kind).toBe('function');
     }
   });
 
